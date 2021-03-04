@@ -14,7 +14,9 @@
         "ico.ts",
         "node.ts",
         "transform.ts",
-        "material.ts"
+        "material.ts",
+        "face.ts",
+        "mesh.ts"
     ],
     "testFiles": [
         "test.ts"
