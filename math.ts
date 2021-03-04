@@ -131,6 +131,10 @@ namespace zoids {
             ];
         }
 
+        public static Identity(): Matrix {
+            return new Matrix();
+        }
+
         public static FromValuesToRef(
             m11: number, m12: number, m13: number, m14: number, // 1st row
             m21: number, m22: number, m23: number, m24: number, // 2nd row
@@ -197,6 +201,38 @@ namespace zoids {
                 0.0, 0.0, d, 0.0,
                 res
             );
+        }
+
+        public static ComposeToRef(trans: Vector3, rot: Quaternion, scale: Vector3, res: Matrix): Matrix {
+            const m = res.m;
+            const x = rot.x, y = rot.y, z = rot.z, w = rot.w;
+            const x2 = x + x, y2 = y + y, z2 = z + z;
+            const xx = x * x2, xy = x * y2, xz = x * z2;
+            const yy = y * y2, yz = y * z2, zz = z * z2;
+            const wx = w * x2, wy = w * y2, wz = w * z2;
+            const sx = scale.x, sy = scale.y, sz = scale.z;
+
+            m[0] = (1 - (yy + zz)) * sx;
+            m[1] = (xy + wz) * sx;
+            m[2] = (xz - wy) * sx;
+            m[3] = 0;
+
+            m[4] = (xy - wz) * sy;
+            m[5] = (1 - (xx + zz)) * sy;
+            m[6] = (yz + wx) * sy;
+            m[7] = 0;
+
+            m[8] = (xz + wy) * sz;
+            m[9] = (yz - wx) * sz;
+            m[10] = (1 - (xx + yy)) * sz;
+            m[11] = 0;
+
+            m[12] = trans.x;
+            m[13] = trans.y;
+            m[14] = trans.z;
+            m[15] = 1;
+
+            return res;
         }
     }
 

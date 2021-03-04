@@ -1,21 +1,26 @@
 namespace zoids {
     export class Node {
-
+        public update() {}
+        public render() {}
     }
 
-    export class TransformNode {
-        private _pos: Vector3;
-        private _rot: Quaternion;
 
-        public get pos() { return this._pos; }
-        public set pos(v) { this._pos.copyFrom(v); }
+    export class Face {
+        constructor(public a: number, public b: number, public c: number) {
+        }
+    }
 
-        public get rot() { return this._rot; }
-        public set rot(v) { this._rot.copyFrom(v); }
+    export class Mesh {
+        private verts: Vector3[];
+        private faces: Face[];
+        private _material: Material;
+
+        public get material() { return this._material; }
 
         constructor() {
-            this._pos = Vector3.Zero();
-            this._rot = Quaternion.Identity();
+            this.verts = [];
+            this.faces = [];
+            this._material = new Material();
         }
     }
 }

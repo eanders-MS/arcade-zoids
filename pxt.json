@@ -12,7 +12,9 @@
         "game.ts",
         "math.ts",
         "ico.ts",
-        "node.ts"
+        "node.ts",
+        "transform.ts",
+        "material.ts"
     ],
     "testFiles": [
         "test.ts"
