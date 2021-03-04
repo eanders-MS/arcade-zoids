@@ -12,4 +12,5 @@ namespace zoids {
             this._material = Material.White();
         }
     }
+
 }
