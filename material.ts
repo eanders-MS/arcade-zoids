@@ -6,7 +6,7 @@ namespace zoids {
         constructor(public colorGradient: number[]) {
         }
 
-        public static White(): Material {
+        public static Default(): Material {
             return new Material([1]);
         }
     }
