@@ -9,7 +9,7 @@ namespace zoids {
         constructor() {
             this.verts = [];
             this.faces = [];
-            this._material = new Material();
+            this._material = Material.White();
         }
     }
 }

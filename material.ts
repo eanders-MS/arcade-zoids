@@ -1,8 +1,13 @@
 namespace zoids {
     export class Material {
-        constructor(public lightColor = 1, public darkColor = 15) {
+        /**
+         * @colorGradient - lighting gradient. palette indices from lightest to darkest.
+         */
+        constructor(public colorGradient: number[]) {
+        }
+
+        public static White(): Material {
+            return new Material([1]);
         }
     }
-
-
 }
