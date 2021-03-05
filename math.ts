@@ -184,6 +184,10 @@ namespace zoids {
             return res;
         }
 
+        public static PerspectiveFovLH(fov: number, aspect: number, znear: number, zfar: number): Matrix {
+            return Matrix.PerspectiveFovLHToRef(fov, aspect, znear, zfar, new Matrix());
+        }
+
         public static PerspectiveFovLHToRef(fov: number, aspect: number, znear: number, zfar: number, res: Matrix, isVerticalFovFixed = true): Matrix {
             const n = znear;
             const f = zfar;
@@ -199,6 +203,28 @@ namespace zoids {
                 0.0, b, 0.0, 0.0,
                 0.0, 0.0, c, 1.0,
                 0.0, 0.0, d, 0.0,
+                res
+            );
+        }
+
+        public static OrthoLH(width: number, height: number, znear: number, zfar: number): Matrix {
+            return Matrix.OrthoLHToRef(width, height, znear, zfar, new Matrix());
+        }
+
+        public static OrthoLHToRef(width: number, height: number, znear: number, zfar: number, res: Matrix): Matrix {
+            const n = znear;
+            const f = zfar;
+
+            const a = 2.0 / width;
+            const b = 2.0 / height;
+            const c = 2.0 / (f - n);
+            const d = -(f + n) / (f - n);
+
+            return Matrix.FromValuesToRef(
+                a, 0.0, 0.0, 0.0,
+                0.0, b, 0.0, 0.0,
+                0.0, 0.0, c, 0.0,
+                0.0, 0.0, d, 1.0,
                 res
             );
         }

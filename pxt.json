@@ -16,13 +16,18 @@
         "transform.ts",
         "material.ts",
         "face.ts",
-        "mesh.ts"
+        "mesh.ts",
+        "line.ts",
+        "camera.ts",
+        "scene.ts",
+        "title.ts",
+        "font.ts"
     ],
     "testFiles": [
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.4.12",
+        "target": "1.4.14",
         "targetId": "arcade"
     },
     "supportedTargets": [
