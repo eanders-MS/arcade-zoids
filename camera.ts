@@ -1,8 +1,15 @@
 namespace zoids {
+    export enum CameraType {
+        Orthographic,
+        Perspective
+    }
+
     export class Camera {
         private _pos: Vector3;
         private _rot: Quaternion;
         private _world: Matrix;
+
+        public get type() { return this._type; }
 
         public get pos() { return this._pos; }
         public set pos(v) { this._pos.copyFrom(v); }
@@ -13,7 +20,7 @@ namespace zoids {
         public get world() { return this._world; }
         public get proj() { return this._proj; }
 
-        constructor(private _proj: Matrix) {
+        constructor(private _type: CameraType, private _proj: Matrix) {
             this._world = Matrix.Identity();
         }
 

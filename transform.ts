@@ -21,7 +21,7 @@ namespace zoids {
         }
 
         public computeWorldMatrix(): Matrix {
-            return Matrix.ComposeToRef(this._pos, this._rot, this._scale, this._mat);
+            return Matrix.ComposeToRef(this, this._mat);
         }
     }
 }

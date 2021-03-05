@@ -1,11 +1,6 @@
 namespace zoids {
     let IdSequence = 0;
 
-    export enum NodeMode {
-        Orthographic,
-        Perspective
-    }
-
     export class Node {
         private _id: number;
         private _transform: Transform;
@@ -24,7 +19,7 @@ namespace zoids {
             }
         }
 
-        constructor(public scene: Scene, public mode: NodeMode) {
+        constructor(public scene: Scene) {
             this._id = ++IdSequence;
             this._children = [];
             this._transform = new Transform();
@@ -51,12 +46,12 @@ namespace zoids {
 
     export class TextNode extends Node {
 
-        constructor(public text: string, public color: number, scene: Scene, mode: NodeMode) {
-            super(scene, mode);
+        constructor(public text: string, public color: number, scene: Scene) {
+            super(scene);
         }
 
         draw(camera: Camera) {
-            if (this.mode === NodeMode.Orthographic && !this.parent) {
+            if (camera.type === CameraType.Orthographic) {
                 let x = this.transform.pos.x;
                 let y = this.transform.pos.y;
                 const img = scene.backgroundImage();

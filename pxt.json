@@ -11,7 +11,6 @@
         "assets.json",
         "game.ts",
         "math.ts",
-        "ico.ts",
         "node.ts",
         "transform.ts",
         "material.ts",
@@ -21,13 +20,14 @@
         "camera.ts",
         "scene.ts",
         "title.ts",
-        "font.ts"
+        "font.ts",
+        "builder.ts"
     ],
     "testFiles": [
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.4.14",
+        "target": "1.4.17",
         "targetId": "arcade"
     },
     "supportedTargets": [
