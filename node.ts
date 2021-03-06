@@ -27,7 +27,8 @@ namespace zoids {
 
         //% blockCombine block="world" callInDebugger
         public get world() {
-            return Matrix.ComposeToRef(this._transform, this._world);
+            const rot = Quaternion.FromYawPitchRoll(this._transform.rot.y, this._transform.rot.x, this._transform.rot.z);
+            return Matrix.ComposeToRef(this._transform.pos, rot, this._transform.scale, this._world);
         }
 
         constructor(public scene: Scene) {
@@ -56,16 +57,43 @@ namespace zoids {
         }
     }
 
+    export enum HorizontalJustification {
+        Left,
+        Center,
+        Right
+    }
+
+    export enum VerticalJustification {
+        Top,
+        Center,
+        Bottom
+    }
+
     export class TextNode extends Node {
+        public horzJust: HorizontalJustification;
 
         constructor(public text: string, public color: number, scene: Scene) {
             super(scene);
+            this.horzJust = HorizontalJustification.Left;
         }
 
         private foreachLine(cb: (p0: Vector3, p1: Vector3) => void) {
             const p0 = new Vector3();
             const p1 = new Vector3();
-            const ofs = new Vector3(this.transform.pos.x, this.transform.pos.y);
+            let ofs = new Vector3(this.transform.pos.x, this.transform.pos.y)
+            switch (this.horzJust) {
+                case HorizontalJustification.Left: {
+                    break;
+                }
+                case HorizontalJustification.Center: {
+                    ofs.x -= (this.text.length * (font.width + 1)) >> 1;
+                    break;
+                }
+                case HorizontalJustification.Right: {
+                    // ??
+                    break;
+                }
+            }
             for (let iCh = 0; iCh < this.text.length; ++iCh) {
                 const ch = this.text.charAt(iCh);
                 const gl = font.glyphs[ch];

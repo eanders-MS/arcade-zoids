@@ -1,4 +1,6 @@
 namespace zoids {
+    // Borrowed heavily from the excellent BabylonJS math library.
+
     export class Vector3 {
         constructor(public x = 0, public y = 0, public z = 0) {
         }
@@ -35,7 +37,7 @@ namespace zoids {
         }
 
         public magnitude(): number {
-            return Math.sqrt(this.magnitude());
+            return Math.sqrt(this.magnitudeSq());
         }
 
         public magnitudeSq(): number {
@@ -130,15 +132,41 @@ namespace zoids {
             return new Quaternion(0, 0, 0, 1);
         }
 
-        public static FromAxisAngleToRef(axis: Vector3, angle: number, ref: Quaternion): Quaternion {
+        public static FromAxisAngleToRef(axis: Vector3, angle: number, res: Quaternion): Quaternion {
             const ao2 = angle / 2;
             const sin = Math.sin(ao2);
             axis.normalize();
-            ref.w = Math.cos(ao2);
-            ref.x = axis.x * sin;
-            ref.y = axis.y * sin;
-            ref.z = axis.z * sin;
-            return ref;
+            res.w = Math.cos(ao2);
+            res.x = axis.x * sin;
+            res.y = axis.y * sin;
+            res.z = axis.z * sin;
+            return res;
+        }
+
+        public static FromYawPitchRoll(yaw: number, pitch: number, roll: number): Quaternion {
+            return Quaternion.FromYawPitchRollToRef(yaw, pitch, roll, new Quaternion());
+        }
+
+        public static FromYawPitchRollToRef(yaw: number, pitch: number, roll: number, res: Quaternion): Quaternion {
+            // Produces a quaternion from Euler angles in the z-y-x orientation (Tait-Bryan angles)
+            const halfRoll = roll * 0.5;
+            const halfPitch = pitch * 0.5;
+            const halfYaw = yaw * 0.5;
+
+            const sinRoll = Math.sin(halfRoll);
+            const cosRoll = Math.cos(halfRoll);
+            const sinPitch = Math.sin(halfPitch);
+            const cosPitch = Math.cos(halfPitch);
+            const sinYaw = Math.sin(halfYaw);
+            const cosYaw = Math.cos(halfYaw);
+
+            res.x = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);
+            res.y = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);
+            res.z = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);
+            res.w = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);
+
+
+            return res;
         }
     }
 
@@ -156,6 +184,20 @@ namespace zoids {
 
         public static Identity(): Matrix {
             return new Matrix();
+        }
+
+        public static FromValues(
+            m11: number, m12: number, m13: number, m14: number, // 1st row
+            m21: number, m22: number, m23: number, m24: number, // 2nd row
+            m31: number, m32: number, m33: number, m34: number, // 3rd row
+            m41: number, m42: number, m43: number, m44: number, // 4th row
+        ): Matrix {
+            return Matrix.FromValuesToRef(
+                m11, m12, m13, m14,
+                m21, m22, m23, m24,
+                m31, m32, m33, m34,
+                m41, m42, m43, m44,
+                new Matrix());
         }
 
         public static FromValuesToRef(
@@ -252,18 +294,18 @@ namespace zoids {
             );
         }
 
-        public static Compose(trans: Transform): Matrix {
-            return Matrix.ComposeToRef(trans, new Matrix());
+        public static Compose(pos: Vector3, rot: Quaternion, scale: Vector3): Matrix {
+            return Matrix.ComposeToRef(pos, rot, scale, new Matrix());
         }
 
-        public static ComposeToRef(trans: Transform, res: Matrix): Matrix {
+        public static ComposeToRef(pos: Vector3, rot: Quaternion, scale: Vector3, res: Matrix): Matrix {
             const m = res.m;
-            const x = trans.rot.x, y = trans.rot.y, z = trans.rot.z, w = trans.rot.w;
+            const x = rot.x, y = rot.y, z = rot.z, w = rot.w;
             const x2 = x + x, y2 = y + y, z2 = z + z;
             const xx = x * x2, xy = x * y2, xz = x * z2;
             const yy = y * y2, yz = y * z2, zz = z * z2;
             const wx = w * x2, wy = w * y2, wz = w * z2;
-            const sx = trans.scale.x, sy = trans.scale.y, sz = trans.scale.z;
+            const sx = scale.x, sy = scale.y, sz = scale.z;
 
             m[0] = (1 - (yy + zz)) * sx;
             m[1] = (xy + wz) * sx;
@@ -280,9 +322,9 @@ namespace zoids {
             m[10] = (1 - (xx + yy)) * sz;
             m[11] = 0;
 
-            m[12] = trans.pos.x;
-            m[13] = trans.pos.y;
-            m[14] = trans.pos.z;
+            m[12] = pos.x;
+            m[13] = pos.y;
+            m[14] = pos.z;
             m[15] = 1;
 
             return res;
@@ -327,6 +369,26 @@ namespace zoids {
             c[15] = am12 * bm3 + am13 * bm7 + am14 * bm11 + am15 * bm15;
 
             return C;
+        }
+
+        public static TransformationMatrix(viewport: Viewport, world: Matrix, view: Matrix, proj: Matrix, zmin: number, zmax: number): Matrix {
+            const cw = viewport.width;
+            const ch = viewport.height;
+            const cx = viewport.x;
+            const cy = viewport.y;
+
+            const viewportMat = Matrix.FromValues(
+                cw / 2.0, 0.0, 0.0, 0.0,
+                0.0, -ch / 2.0, 0.0, 0.0,
+                0.0, 0.0, zmax - zmin, 0.0,
+                cx + cw / 2.0, ch / 2.0 + cy, zmin, 1.0);
+
+            const mat = MathTmp.mat;
+            Matrix.MultiplyToRef(world, view, mat);
+            Matrix.MultiplyToRef(mat, proj, mat);
+            Matrix.MultiplyToRef(mat, viewportMat, mat);
+
+            return mat;
         }
     }
 

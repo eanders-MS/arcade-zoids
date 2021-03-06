@@ -6,8 +6,9 @@ namespace zoids {
 
     export class Camera {
         private _pos: Vector3;
-        private _rot: Quaternion;
-        private _world: Matrix;
+        private _rot: Vector3;
+        private _view: Matrix;
+        public viewport: Viewport;
 
         //% blockCombine block="type" callInDebugger
         public get type() { return this._type; }
@@ -21,18 +22,24 @@ namespace zoids {
         public set rot(v) { this._rot.copyFrom(v); }
 
         //% blockCombine block="world" callInDebugger
-        public get world() { return this._world; }
+        public get view() { return this._view; }
         //% blockCombine block="proj" callInDebugger
         public get proj() { return this._proj; }
-        //% blockCombine block="viewProj" callInDebugger
-        public get viewProj() { return this._proj; } // todo
+        // //% blockCombine block="viewProj" callInDebugger
+        //public get viewProj() { return this._viewProj; }
 
         constructor(private _type: CameraType, private _proj: Matrix) {
-            this._world = Matrix.Identity();
+            this._pos = Vector3.Zero();
+            this._rot = Vector3.Zero();
+            this._view = Matrix.Identity();
+            this.viewport = new Viewport(0, 0, scene.screenWidth(), scene.screenHeight());
         }
 
         public recalc() {
-            
+            const rot = Quaternion.FromYawPitchRoll(this.rot.y, this.rot.x, this.rot.z);
+            //Matrix.TransformationMatrix(this.viewport, this.
+            Matrix.ComposeToRef(this._pos, rot, Vector3.One(), this._world);
+            Matrix.MultiplyToRef(this._world, this._proj, this._viewProj);
         }
 
     }

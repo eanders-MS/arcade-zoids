@@ -1,7 +1,7 @@
 namespace zoids {
     export class Transform {
         private _pos: Vector3;
-        private _rot: Quaternion;
+        private _rot: Vector3;
         private _scale: Vector3;
         private _mat: Matrix;
 
@@ -19,7 +19,7 @@ namespace zoids {
 
         constructor() {
             this._pos = Vector3.Zero();
-            this._rot = Quaternion.Identity();
+            this._rot = Vector3.Zero();
             this._scale = Vector3.One();
             this._mat = Matrix.Identity();
         }
