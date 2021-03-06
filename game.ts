@@ -25,7 +25,7 @@ namespace zoids {
         draw() {
             scene.backgroundImage().fill(15);
             this.letters.draw(this.orthoCam);
-            this.numbers.draw(this.orthoCam);
+            this.numbers.draw(this.perspCam);
         }
 
     }

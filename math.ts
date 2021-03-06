@@ -7,6 +7,10 @@ namespace zoids {
             return new Vector3(0, 0, 0);
         }
 
+        public static One(): Vector3 {
+            return new Vector3(1, 1, 1);
+        }
+
         public copyFrom(v: Vector3): this {
             this.x = v.x;
             this.y = v.y;
@@ -76,16 +80,35 @@ namespace zoids {
             return res;
         }
 
+        public transform(mat: Matrix): Vector3 {
+            return Vector3.TransformToRef(this, mat, this);
+        }
+
         public transformToRef(mat: Matrix, res: Vector3): Vector3 {
+            return Vector3.TransformToRef(this, mat, res);
+        }
+
+        public static Add(p0: Vector3, p1: Vector3): Vector3 {
+            return Vector3.AddToRef(p0, p1, new Vector3());
+        }
+
+        public static AddToRef(p0: Vector3, p1: Vector3, res: Vector3): Vector3 {
+            res.x = p0.x + p1.x;
+            res.y = p0.y + p1.y;
+            res.z = p0.z + p1.z;
+            return res;
+        }
+
+        public static TransformToRef(v: Vector3, mat: Matrix, res: Vector3): Vector3 {
             const m = mat.m;
-            const rx = this.x * m[0] + this.y * m[4] + this.z * m[8] + m[12];
-            const ry = this.x * m[1] + this.y * m[5] + this.z * m[9] + m[13];
-            const rz = this.x * m[2] + this.y * m[6] + this.z * m[10] + m[14];
-            const rw = 1 / (this.x * m[3] + this.y * m[7] + this.z * m[11] + m[15]);
+            const rx = v.x * m[0] + v.y * m[4] + v.z * m[8] + m[12];
+            const ry = v.x * m[1] + v.y * m[5] + v.z * m[9] + m[13];
+            const rz = v.x * m[2] + v.y * m[6] + v.z * m[10] + m[14];
+            const rw = 1 / (v.x * m[3] + v.y * m[7] + v.z * m[11] + m[15]);
 
             res.x = rx * rw;
             res.y = ry * rw;
-            res.z = rz * rw; 
+            res.z = rz * rw;
 
             return res;
         }
@@ -263,6 +286,47 @@ namespace zoids {
             m[15] = 1;
 
             return res;
+        }
+
+        public static Multiply(A: Matrix, B: Matrix): Matrix {
+            return Matrix.MultiplyToRef(A, B, new Matrix());
+        }
+
+        public static MultiplyToRef(A: Matrix, B: Matrix, C: Matrix): Matrix {
+            const a = A.m;
+            const b = B.m;
+            const c = C.m;
+            const am0 = a[0], am1 = a[1], am2 = a[2], am3 = a[3];
+            const am4 = a[4], am5 = a[5], am6 = a[6], am7 = a[7];
+            const am8 = a[8], am9 = a[9], am10 = a[10], am11 = a[11];
+            const am12 = a[12], am13 = a[13], am14 = a[14], am15 = a[15];
+
+            const bm0 = b[0], bm1 = b[1], bm2 = b[2], bm3 = b[3];
+            const bm4 = b[4], bm5 = b[5], bm6 = b[6], bm7 = b[7];
+            const bm8 = b[8], bm9 = b[9], bm10 = b[10], bm11 = b[11];
+            const bm12 = b[12], bm13 = b[13], bm14 = b[14], bm15 = b[15];
+
+            c[0] = am0 * bm0 + am1 * bm4 + am2 * bm8 + am3 * bm12;
+            c[1] = am0 * bm1 + am1 * bm5 + am2 * bm9 + am3 * bm13;
+            c[2] = am0 * bm2 + am1 * bm6 + am2 * bm10 + am3 * bm14;
+            c[3] = am0 * bm3 + am1 * bm7 + am2 * bm11 + am3 * bm15;
+
+            c[4] = am4 * bm0 + am5 * bm4 + am6 * bm8 + am7 * bm12;
+            c[5] = am4 * bm1 + am5 * bm5 + am6 * bm9 + am7 * bm13;
+            c[6] = am4 * bm2 + am5 * bm6 + am6 * bm10 + am7 * bm14;
+            c[7] = am4 * bm3 + am5 * bm7 + am6 * bm11 + am7 * bm15;
+
+            c[8] = am8 * bm0 + am9 * bm4 + am10 * bm8 + am11 * bm12;
+            c[9] = am8 * bm1 + am9 * bm5 + am10 * bm9 + am11 * bm13;
+            c[10] = am8 * bm2 + am9 * bm6 + am10 * bm10 + am11 * bm14;
+            c[11] = am8 * bm3 + am9 * bm7 + am10 * bm11 + am11 * bm15;
+
+            c[12] = am12 * bm0 + am13 * bm4 + am14 * bm8 + am15 * bm12;
+            c[13] = am12 * bm1 + am13 * bm5 + am14 * bm9 + am15 * bm13;
+            c[14] = am12 * bm2 + am13 * bm6 + am14 * bm10 + am15 * bm14;
+            c[15] = am12 * bm3 + am13 * bm7 + am14 * bm11 + am15 * bm15;
+
+            return C;
         }
     }
 
