@@ -16,7 +16,6 @@
         "material.ts",
         "camera.ts",
         "scene.ts",
-        "title.ts",
         "font.ts",
         "shapes.ts"
     ],
