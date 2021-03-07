@@ -24,6 +24,13 @@ namespace zoids {
             return this;
         }
 
+        public copyFromPoint(pt: Point): this {
+            this.x = pt.x;
+            this.y = pt.y;
+            this.z = pt.z;
+            return this;
+        }
+
         public normalize(): this {
             let mag = this.magnitudeSq();
             if (mag != 1.0 && mag != 0.0) {

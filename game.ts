@@ -4,7 +4,7 @@ namespace zoids {
         private orthoCam: Camera;
         private perspCam: Camera;
         private letters: TextNode;
-        private numbers: TextNode;
+        private box: PolygonNode;
 
         constructor() {
             super();
@@ -16,23 +16,16 @@ namespace zoids {
             this.perspCam = new Camera(CameraType.Perspective, Matrix.PerspectiveFovLH(1.57, scene.screenWidth() / scene.screenHeight(), 1, 100));
             this.letters = new TextNode("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1, this);
             this.letters.transform.pos.z = 2;
-            this.numbers = new TextNode("012345", 3, this);
-            this.numbers.horzJust = HorizontalJustification.Center;
-            this.numbers.vertJust = VerticalJustification.Center;
-            this.numbers.transform.pos.z = 40;
-            this.numbers.transform.pos.x = 0;
-            this.numbers.transform.pos.y = 0;
-
-            this.numbers.transform.scale = Vector3.FromScalar(1);
+            this.box = new PolygonNode(shapes.Box, 4, this);
+            this.box.transform.pos.z = 2;
         }
 
         activate() {
         }
 
         update() {
-            this.numbers.transform.rot.z += 0.01;
-            this.numbers.transform.rot.y += 0.03;
-            this.numbers.transform.rot.x += 0.007;
+            this.box.transform.rot.y += 0.037;
+            this.box.transform.rot.z += 0.005;
         }
 
         draw() {
@@ -40,7 +33,7 @@ namespace zoids {
             this.orthoCam.recalc();
             this.perspCam.recalc();
             this.letters.draw(this.orthoCam);
-            this.numbers.draw(this.perspCam);
+            this.box.draw(this.perspCam);
         }
 
     }

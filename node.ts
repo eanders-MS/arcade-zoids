@@ -82,6 +82,7 @@ namespace zoids {
         private foreachLine(cb: (p0: Vector3, p1: Vector3) => void) {
             const p0 = Vector3.Zero();
             const p1 = Vector3.Zero();
+
             let ofs = new Vector3(this.transform.pos.x, this.transform.pos.y)
             switch (this.horzJust) {
                 case HorizontalJustification.Left: {
@@ -120,10 +121,10 @@ namespace zoids {
                             const pt1 = seg[iPt + 1];
                             p0.x = ofs.x + pt0.x;
                             p0.y = ofs.y + pt0.y;
-                            p0.z = 0;
+                            p0.z = ofs.z + pt0.z;
                             p1.x = ofs.x + pt1.x;
                             p1.y = ofs.y + pt1.y;
-                            p1.z = 0;
+                            p1.z = ofs.z + pt1.z;
                             cb(p0, p1);
                         }
                     }
@@ -138,6 +139,45 @@ namespace zoids {
             if (camera.type === CameraType.Orthographic) {
                 this.foreachLine((p0, p1) => img.drawLine(p0.x, p0.y, p1.x, p1.y, this.color));
             } else if (camera.type === CameraType.Perspective) {
+                const wvp = Matrix.Multiply(this.world, camera.viewProj);
+                this.foreachLine((p0, p1) => {
+                    p0.transform(wvp);
+                    p1.transform(wvp);
+                    img.drawLine(p0.x, p0.y, p1.x, p1.y, this.color);
+                });
+            }
+        }
+    }
+
+    export class PolygonNode extends Node {
+
+        constructor(private shape: Polygon, private color: number, scene: Scene) {
+            super(scene);
+        }
+
+        private foreachLine(cb: (p0: Vector3, p1: Vector3) => void) {
+            const p0 = Vector3.Zero();
+            const p1 = Vector3.Zero();
+
+            const gl = this.shape;
+            if (gl) {
+                for (let iSeg = 0; iSeg < gl.length; ++iSeg) {
+                    const seg = gl[iSeg];
+                    for (let iPt = 0; iPt < seg.length - 1; ++iPt) {
+                        const pt0 = seg[iPt];
+                        const pt1 = seg[iPt + 1];
+                        p0.copyFromPoint(pt0);
+                        p1.copyFromPoint(pt1);
+                        cb(p0, p1);
+                    }
+                }
+            }
+        }
+
+        draw(camera: Camera) {
+            const img = scene.backgroundImage();
+
+            if (camera.type === CameraType.Perspective) {
                 const wvp = Matrix.Multiply(this.world, camera.viewProj);
                 this.foreachLine((p0, p1) => {
                     p0.transform(wvp);
