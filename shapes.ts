@@ -2,6 +2,7 @@ namespace zoids {
     export type Point = { x: number, y: number, z: number };
     export type Line = Point[];
     export type Polygon = Line[];
+    export type Faced = { a: number, b: number, c: number };
 
     export class polygons {
 
