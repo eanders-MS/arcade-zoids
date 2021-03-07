@@ -5,6 +5,8 @@ namespace zoids {
         private perspCam: Camera;
         private letters: TextNode;
         private box: ShapeNode;
+        private leftbox: ShapeNode;
+        private rightbox: ShapeNode;
 
         constructor() {
             super();
@@ -17,7 +19,15 @@ namespace zoids {
             this.letters = new TextNode("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1, this);
             this.letters.transform.pos.z = 2;
             this.box = new ShapeNode(shapes.Box, 4, this);
-            this.box.transform.pos.z = 4;
+            this.box.transform.pos.z = 5;
+            this.leftbox = new ShapeNode(shapes.Box, 3, this);
+            this.leftbox.transform.pos.x = -1.5;
+            this.leftbox.transform.scale = Vector3.FromScalar(0.5);
+            this.leftbox.parent = this.box;
+            this.rightbox = new ShapeNode(shapes.Box, 5, this);
+            this.rightbox.transform.pos.x = 1.5;
+            this.rightbox.transform.scale = Vector3.FromScalar(0.5);
+            this.rightbox.parent = this.box;
         }
 
         activate() {
@@ -25,7 +35,9 @@ namespace zoids {
 
         update() {
             this.box.transform.rot.y += 0.037;
-            this.box.transform.rot.z += 0.005;
+            this.box.transform.rot.z += 0.01;
+            this.leftbox.transform.rot.x += 0.021;
+            this.rightbox.transform.rot.y -= 0.015;
         }
 
         draw() {

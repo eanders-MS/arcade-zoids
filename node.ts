@@ -14,6 +14,8 @@ namespace zoids {
         //% blockCombine block="transform" callInDebugger
         public get transform() { return this._transform; }
 
+        public get children() { return this._children; }
+
         //% blockCombine block="parent" callInDebugger
         public get parent() { return this._parent; }
         public set parent(v: Node) {
@@ -28,7 +30,11 @@ namespace zoids {
         //% blockCombine block="world" callInDebugger
         public get world() {
             const rot = Quaternion.FromYawPitchRoll(this._transform.rot.y, this._transform.rot.x, this._transform.rot.z);
-            return Matrix.ComposeToRef(this._transform.pos, rot, this._transform.scale, this._world);
+            Matrix.ComposeToRef(this._transform.pos, rot, this._transform.scale, this._world);
+            if (this.parent) {
+                Matrix.MultiplyToRef(this._world, this.parent.world, this._world);
+            }
+            return this._world;
         }
 
         constructor(public scene: Scene) {
@@ -175,7 +181,7 @@ namespace zoids {
         draw(camera: Camera) {
             const img = scene.backgroundImage();
             if (camera.type === CameraType.Perspective) {
-                const wvp = Matrix.Multiply(this.world, camera.viewProj);
+                let wvp = Matrix.Multiply(this.world, camera.viewProj);
                 this.foreachLine((p0, p1) => {
                     p0.transform(wvp);
                     p1.transform(wvp);
@@ -191,11 +197,6 @@ namespace zoids {
             super(scene);
         }
 
-        private foreachFace(cb: (face: Face) => void) {
-            
-        }
-
-
         draw(camera: Camera) {
             const img = scene.backgroundImage();
             if (camera.type === CameraType.Perspective) {
@@ -206,25 +207,24 @@ namespace zoids {
                 this.shape.faces.forEach(face => {
                     // Perf issue: interior lines are drawn multiple times.
                     // Could keep a global "this line drawn?" buffer.
-                    const pta = this.shape.poly[face.a.i][face.a.j];
-                    const ptb = this.shape.poly[face.b.i][face.b.j];
-                    const ptc = this.shape.poly[face.c.i][face.c.j];
-                    a.setFromPoint(pta);
-                    b.setFromPoint(ptb);
-                    c.setFromPoint(ptc);
+                    const pa = this.shape.poly[face.a.i][face.a.j];
+                    const pb = this.shape.poly[face.b.i][face.b.j];
+                    const pc = this.shape.poly[face.c.i][face.c.j];
+                    a.setFromPoint(pa);
+                    b.setFromPoint(pb);
+                    c.setFromPoint(pc);
                     a.transform(wvp);
                     b.transform(wvp);
                     c.transform(wvp);
-                    const normal = Vector3.Cross(Vector3.Subtract(b, a), Vector3.Subtract(b, c));
+                    const normal = Vector3.Cross(Vector3.Subtract(a, b), Vector3.Subtract(b, c));
                     const d = Vector3.Dot(camera.forward, normal);
-                    if (d <= 0) {
+                    if (d > 0) {
                         img.drawLine(a.x, a.y, b.x, b.y, this.color);
                         img.drawLine(b.x, b.y, c.x, c.y, this.color);
-
                     }
-
                 });
             }
+            this.children.forEach(child => child.draw(camera));
 
         }
     }
