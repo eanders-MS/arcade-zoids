@@ -16,12 +16,11 @@
         "material.ts",
         "face.ts",
         "mesh.ts",
-        "line.ts",
         "camera.ts",
         "scene.ts",
         "title.ts",
         "font.ts",
-        "builder.ts"
+        "shapes.ts"
     ],
     "testFiles": [
         "test.ts"

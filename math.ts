@@ -13,6 +13,10 @@ namespace zoids {
             return new Vector3(1, 1, 1);
         }
 
+        public static FromScalar(s: number): Vector3 {
+            return new Vector3(s, s, s);
+        }
+
         public copyFrom(v: Vector3): this {
             this.x = v.x;
             this.y = v.y;
@@ -173,13 +177,24 @@ namespace zoids {
     export class Matrix {
         public m: number[];
 
-        constructor() {
-            this.m = [
+        constructor(values: number[] = null) {
+            this.m = values || [
                 1.0, 0.0, 0.0, 0.0,
                 0.0, 1.0, 0.0, 0.0,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 1.0,
             ];
+        }
+
+        public copyFrom(mat: Matrix): Matrix {
+            const m = mat.m;
+            return Matrix.FromValuesToRef(
+                m[0], m[1], m[2], m[3],
+                m[4], m[5], m[6], m[7],
+                m[8], m[9], m[10], m[11],
+                m[12], m[13], m[14], m[15],
+                this
+            );
         }
 
         public static Identity(): Matrix {
@@ -369,6 +384,87 @@ namespace zoids {
             c[15] = am12 * bm3 + am13 * bm7 + am14 * bm11 + am15 * bm15;
 
             return C;
+        }
+
+        public static Translation(x: number, y: number, z: number): Matrix {
+            return Matrix.TranslationToRef(x, y, z, new Matrix());
+        }
+
+        public static TranslationToRef(x: number, y: number, z: number, result: Matrix): Matrix {
+            return Matrix.FromValuesToRef(
+                1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                x, y, z, 1.0,
+                result
+            );
+        }
+
+        public static InvertToRef(mat: Matrix, res: Matrix): Matrix {
+            // the inverse of a Matrix is the transpose of cofactor matrix divided by the determinant
+            const m = mat.m;
+            const m00 = m[0], m01 = m[1], m02 = m[2], m03 = m[3];
+            const m10 = m[4], m11 = m[5], m12 = m[6], m13 = m[7];
+            const m20 = m[8], m21 = m[9], m22 = m[10], m23 = m[11];
+            const m30 = m[12], m31 = m[13], m32 = m[14], m33 = m[15];
+
+            const det_22_33 = m22 * m33 - m32 * m23;
+            const det_21_33 = m21 * m33 - m31 * m23;
+            const det_21_32 = m21 * m32 - m31 * m22;
+            const det_20_33 = m20 * m33 - m30 * m23;
+            const det_20_32 = m20 * m32 - m22 * m30;
+            const det_20_31 = m20 * m31 - m30 * m21;
+
+            const cofact_00 = +(m11 * det_22_33 - m12 * det_21_33 + m13 * det_21_32);
+            const cofact_01 = -(m10 * det_22_33 - m12 * det_20_33 + m13 * det_20_32);
+            const cofact_02 = +(m10 * det_21_33 - m11 * det_20_33 + m13 * det_20_31);
+            const cofact_03 = -(m10 * det_21_32 - m11 * det_20_32 + m12 * det_20_31);
+
+            const det = m00 * cofact_00 + m01 * cofact_01 + m02 * cofact_02 + m03 * cofact_03;
+
+            if (det === 0) {
+                // not invertible
+                res.copyFrom(mat);
+                return res;
+            }
+
+            const detInv = 1 / det;
+            const det_12_33 = m12 * m33 - m32 * m13;
+            const det_11_33 = m11 * m33 - m31 * m13;
+            const det_11_32 = m11 * m32 - m31 * m12;
+            const det_10_33 = m10 * m33 - m30 * m13;
+            const det_10_32 = m10 * m32 - m30 * m12;
+            const det_10_31 = m10 * m31 - m30 * m11;
+            const det_12_23 = m12 * m23 - m22 * m13;
+            const det_11_23 = m11 * m23 - m21 * m13;
+            const det_11_22 = m11 * m22 - m21 * m12;
+            const det_10_23 = m10 * m23 - m20 * m13;
+            const det_10_22 = m10 * m22 - m20 * m12;
+            const det_10_21 = m10 * m21 - m20 * m11;
+
+            const cofact_10 = -(m01 * det_22_33 - m02 * det_21_33 + m03 * det_21_32);
+            const cofact_11 = +(m00 * det_22_33 - m02 * det_20_33 + m03 * det_20_32);
+            const cofact_12 = -(m00 * det_21_33 - m01 * det_20_33 + m03 * det_20_31);
+            const cofact_13 = +(m00 * det_21_32 - m01 * det_20_32 + m02 * det_20_31);
+
+            const cofact_20 = +(m01 * det_12_33 - m02 * det_11_33 + m03 * det_11_32);
+            const cofact_21 = -(m00 * det_12_33 - m02 * det_10_33 + m03 * det_10_32);
+            const cofact_22 = +(m00 * det_11_33 - m01 * det_10_33 + m03 * det_10_31);
+            const cofact_23 = -(m00 * det_11_32 - m01 * det_10_32 + m02 * det_10_31);
+
+            const cofact_30 = -(m01 * det_12_23 - m02 * det_11_23 + m03 * det_11_22);
+            const cofact_31 = +(m00 * det_12_23 - m02 * det_10_23 + m03 * det_10_22);
+            const cofact_32 = -(m00 * det_11_23 - m01 * det_10_23 + m03 * det_10_21);
+            const cofact_33 = +(m00 * det_11_22 - m01 * det_10_22 + m02 * det_10_21);
+
+            Matrix.FromValuesToRef(
+                cofact_00 * detInv, cofact_10 * detInv, cofact_20 * detInv, cofact_30 * detInv,
+                cofact_01 * detInv, cofact_11 * detInv, cofact_21 * detInv, cofact_31 * detInv,
+                cofact_02 * detInv, cofact_12 * detInv, cofact_22 * detInv, cofact_32 * detInv,
+                cofact_03 * detInv, cofact_13 * detInv, cofact_23 * detInv, cofact_33 * detInv,
+                res
+            );
+            return res;         
         }
 
         public static TransformationMatrix(viewport: Viewport, world: Matrix, view: Matrix, proj: Matrix, zmin: number, zmax: number): Matrix {

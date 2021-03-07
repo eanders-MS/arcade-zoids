@@ -18,18 +18,21 @@ namespace zoids {
             this.letters.transform.pos.z = 2;
             this.numbers = new TextNode("012345", 3, this);
             this.numbers.horzJust = HorizontalJustification.Center;
-            this.numbers.transform.pos.z = 2;
-            //this.numbers.transform.pos.x = 80;
+            this.numbers.vertJust = VerticalJustification.Center;
+            this.numbers.transform.pos.z = 40;
+            this.numbers.transform.pos.x = 0;
+            this.numbers.transform.pos.y = 0;
+
+            this.numbers.transform.scale = Vector3.FromScalar(1);
         }
 
         activate() {
         }
 
         update() {
-            //this.perspCam.rot.z += 0.01;
             this.numbers.transform.rot.z += 0.01;
-            //this.numbers.transform.rot.y += 0.03;
-            //this.numbers.transform.rot.x += 0.007;
+            this.numbers.transform.rot.y += 0.03;
+            this.numbers.transform.rot.x += 0.007;
         }
 
         draw() {

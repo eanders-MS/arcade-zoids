@@ -71,15 +71,17 @@ namespace zoids {
 
     export class TextNode extends Node {
         public horzJust: HorizontalJustification;
+        public vertJust: VerticalJustification;
 
         constructor(public text: string, public color: number, scene: Scene) {
             super(scene);
             this.horzJust = HorizontalJustification.Left;
+            this.vertJust = VerticalJustification.Top;
         }
 
         private foreachLine(cb: (p0: Vector3, p1: Vector3) => void) {
-            const p0 = new Vector3();
-            const p1 = new Vector3();
+            const p0 = Vector3.Zero();
+            const p1 = Vector3.Zero();
             let ofs = new Vector3(this.transform.pos.x, this.transform.pos.y)
             switch (this.horzJust) {
                 case HorizontalJustification.Left: {
@@ -90,7 +92,20 @@ namespace zoids {
                     break;
                 }
                 case HorizontalJustification.Right: {
-                    // ??
+                    ofs.x -= this.text.length * (font.width + 1);
+                    break;
+                }
+            }
+            switch (this.vertJust) {
+                case VerticalJustification.Top: {
+                    break;
+                }
+                case VerticalJustification.Center: {
+                    ofs.y -= font.height >> 1;
+                    break;
+                }
+                case VerticalJustification.Bottom: {
+                    ofs.y -= font.height;
                     break;
                 }
             }
@@ -105,8 +120,10 @@ namespace zoids {
                             const pt1 = seg[iPt + 1];
                             p0.x = ofs.x + pt0.x;
                             p0.y = ofs.y + pt0.y;
+                            p0.z = 0;
                             p1.x = ofs.x + pt1.x;
                             p1.y = ofs.y + pt1.y;
+                            p1.z = 0;
                             cb(p0, p1);
                         }
                     }
