@@ -36,6 +36,7 @@ namespace zoids {
         update() {
             this.box.transform.rot.y += 0.037;
             this.box.transform.rot.z += 0.01;
+            this.box.transform.rot.x += 0.005;
             this.leftbox.transform.rot.x += 0.021;
             this.rightbox.transform.rot.y -= 0.015;
         }

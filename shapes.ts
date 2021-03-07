@@ -11,10 +11,8 @@ namespace zoids {
         a: FacePoint,
         b: FacePoint,
         c: FacePoint,
-        // Note: c-a is never drawn
+        // Note: line c-a is never drawn
     };
-    const M_ABBC = 3;
-    const M_CA = 4;
 
     export type Shape = {
         poly: Polygon;

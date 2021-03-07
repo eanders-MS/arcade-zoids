@@ -48,9 +48,6 @@ namespace zoids {
             //Matrix.MultiplyToRef(this._view, this._proj, this._viewProj);
             Matrix.MultiplyToRef(Matrix.Identity(), this._proj, this._viewProj);
 
-            const zmin = 0;
-            const zmax = 1;
-
             const cw = this.viewport.width;
             const ch = this.viewport.height;
             const cx = this.viewport.x;
@@ -59,8 +56,8 @@ namespace zoids {
             const viewportMat = Matrix.FromValues(
                 cw / 2.0, 0.0, 0.0, 0.0,
                 0.0, ch / 2.0, 0.0, 0.0,
-                0.0, 0.0, zmax - zmin, 0.0,
-                cx + cw / 2.0, ch / 2.0 + cy, zmin, 1.0);
+                0.0, 0.0, 1.0, 0.0,
+                cx + cw / 2.0, ch / 2.0 + cy, 0.0, 1.0);
 
             Matrix.MultiplyToRef(this._viewProj, viewportMat, this._viewProj);
 
