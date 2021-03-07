@@ -16,7 +16,7 @@ namespace zoids {
             this.perspCam = new Camera(CameraType.Perspective, Matrix.PerspectiveFovLH(1.57, scene.screenWidth() / scene.screenHeight(), 1, 100));
             this.letters = new TextNode("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1, this);
             this.letters.transform.pos.z = 2;
-            this.box = new PolygonNode(shapes.Box, 4, this);
+            this.box = new PolygonNode(polygons.Box, 4, this);
             this.box.transform.pos.z = 2;
         }
 

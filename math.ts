@@ -31,6 +31,13 @@ namespace zoids {
             return this;
         }
 
+        public set(x: number, y: number, z: number): this {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            return this;
+        }
+
         public normalize(): this {
             let mag = this.magnitudeSq();
             if (mag != 1.0 && mag != 0.0) {
@@ -101,6 +108,10 @@ namespace zoids {
             return Vector3.TransformToRef(this, mat, res);
         }
 
+        public static Dot(left: Vector3, right: Vector3): number {
+            return (left.x * right.x + left.y * right.y + left.z * right.z);
+        }
+
         public static Add(p0: Vector3, p1: Vector3): Vector3 {
             return Vector3.AddToRef(p0, p1, new Vector3());
         }
@@ -109,6 +120,17 @@ namespace zoids {
             res.x = p0.x + p1.x;
             res.y = p0.y + p1.y;
             res.z = p0.z + p1.z;
+            return res;
+        }
+
+        public static Subtract(p0: Vector3, p1: Vector3): Vector3 {
+            return Vector3.SubtractToRef(p0, p1, new Vector3());
+        }
+
+        public static SubtractToRef(p0: Vector3, p1: Vector3, res: Vector3): Vector3 {
+            res.x = p0.x - p1.x;
+            res.y = p0.y - p1.y;
+            res.z = p0.z - p1.z;
             return res;
         }
 

@@ -29,6 +29,8 @@ namespace zoids {
         public get proj() { return this._proj; }
         // //% blockCombine block="viewProj" callInDebugger
         public get viewProj() { return this._viewProj; }
+        //% blockCombine block="forward" callInDebugger
+        public get forward() { return new Vector3(0, 0, 1); }
 
         constructor(private _type: CameraType, private _proj: Matrix) {
             this._pos = Vector3.Zero();

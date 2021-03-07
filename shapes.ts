@@ -3,7 +3,7 @@ namespace zoids {
     export type Line = Point[];
     export type Polygon = Line[];
 
-    export class shapes {
+    export class polygons {
 
         public static Box: Polygon = [
             // Top

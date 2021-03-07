@@ -112,19 +112,21 @@ namespace zoids {
             }
             for (let iCh = 0; iCh < this.text.length; ++iCh) {
                 const ch = this.text.charAt(iCh);
-                const gl = font.glyphs[ch];
-                if (gl) {
-                    for (let iSeg = 0; iSeg < gl.length; ++iSeg) {
-                        const seg = gl[iSeg];
+                const glyph = font.glyphs[ch];
+                if (glyph) {
+                    for (let iSeg = 0; iSeg < glyph.length; ++iSeg) {
+                        const seg = glyph[iSeg];
                         for (let iPt = 0; iPt < seg.length - 1; ++iPt) {
                             const pt0 = seg[iPt];
                             const pt1 = seg[iPt + 1];
-                            p0.x = ofs.x + pt0.x;
-                            p0.y = ofs.y + pt0.y;
-                            p0.z = ofs.z + pt0.z;
-                            p1.x = ofs.x + pt1.x;
-                            p1.y = ofs.y + pt1.y;
-                            p1.z = ofs.z + pt1.z;
+                            p0.set(
+                                ofs.x + pt0.x,
+                                ofs.y + pt0.y,
+                                ofs.z + pt0.z);
+                            p1.set(
+                                ofs.x + pt1.x,
+                                ofs.y + pt1.y,
+                                ofs.z + pt1.z);
                             cb(p0, p1);
                         }
                     }
@@ -135,7 +137,6 @@ namespace zoids {
 
         draw(camera: Camera) {
             const img = scene.backgroundImage();
-
             if (camera.type === CameraType.Orthographic) {
                 this.foreachLine((p0, p1) => img.drawLine(p0.x, p0.y, p1.x, p1.y, this.color));
             } else if (camera.type === CameraType.Perspective) {
@@ -158,11 +159,10 @@ namespace zoids {
         private foreachLine(cb: (p0: Vector3, p1: Vector3) => void) {
             const p0 = Vector3.Zero();
             const p1 = Vector3.Zero();
-
-            const gl = this.shape;
-            if (gl) {
-                for (let iSeg = 0; iSeg < gl.length; ++iSeg) {
-                    const seg = gl[iSeg];
+            const shape = this.shape;
+            if (shape) {
+                for (let iSeg = 0; iSeg < shape.length; ++iSeg) {
+                    const seg = shape[iSeg];
                     for (let iPt = 0; iPt < seg.length - 1; ++iPt) {
                         const pt0 = seg[iPt];
                         const pt1 = seg[iPt + 1];
@@ -176,7 +176,6 @@ namespace zoids {
 
         draw(camera: Camera) {
             const img = scene.backgroundImage();
-
             if (camera.type === CameraType.Perspective) {
                 const wvp = Matrix.Multiply(this.world, camera.viewProj);
                 this.foreachLine((p0, p1) => {
