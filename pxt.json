@@ -13,7 +13,6 @@
         "math.ts",
         "node.ts",
         "transform.ts",
-        "material.ts",
         "camera.ts",
         "scene.ts",
         "font.ts",
