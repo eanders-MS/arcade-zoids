@@ -152,24 +152,22 @@ namespace zoids {
 
     export class PolygonNode extends Node {
 
-        constructor(private shape: Polygon, private color: number, scene: Scene) {
+        constructor(private poly: Polygon, private color: number, scene: Scene) {
             super(scene);
         }
 
         private foreachLine(cb: (p0: Vector3, p1: Vector3) => void) {
             const p0 = Vector3.Zero();
             const p1 = Vector3.Zero();
-            const shape = this.shape;
-            if (shape) {
-                for (let iSeg = 0; iSeg < shape.length; ++iSeg) {
-                    const seg = shape[iSeg];
-                    for (let iPt = 0; iPt < seg.length - 1; ++iPt) {
-                        const pt0 = seg[iPt];
-                        const pt1 = seg[iPt + 1];
-                        p0.copyFromPoint(pt0);
-                        p1.copyFromPoint(pt1);
-                        cb(p0, p1);
-                    }
+            const poly = this.poly;
+            for (let iSeg = 0; iSeg < poly.length; ++iSeg) {
+                const seg = poly[iSeg];
+                for (let iPt = 0; iPt < seg.length - 1; ++iPt) {
+                    const pt0 = seg[iPt];
+                    const pt1 = seg[iPt + 1];
+                    p0.setFromPoint(pt0);
+                    p1.setFromPoint(pt1);
+                    cb(p0, p1);
                 }
             }
         }
@@ -184,6 +182,50 @@ namespace zoids {
                     img.drawLine(p0.x, p0.y, p1.x, p1.y, this.color);
                 });
             }
+        }
+    }
+
+    export class ShapeNode extends Node {
+
+        constructor(private shape: Shape, private color: number, scene: Scene) {
+            super(scene);
+        }
+
+        private foreachFace(cb: (face: Face) => void) {
+            
+        }
+
+
+        draw(camera: Camera) {
+            const img = scene.backgroundImage();
+            if (camera.type === CameraType.Perspective) {
+                const wvp = Matrix.Multiply(this.world, camera.viewProj);
+                const a = Vector3.Zero();
+                const b = Vector3.Zero();
+                const c = Vector3.Zero();
+                this.shape.faces.forEach(face => {
+                    // Perf issue: interior lines are drawn multiple times.
+                    // Could keep a global "this line drawn?" buffer.
+                    const pta = this.shape.poly[face.a.i][face.a.j];
+                    const ptb = this.shape.poly[face.b.i][face.b.j];
+                    const ptc = this.shape.poly[face.c.i][face.c.j];
+                    a.setFromPoint(pta);
+                    b.setFromPoint(ptb);
+                    c.setFromPoint(ptc);
+                    a.transform(wvp);
+                    b.transform(wvp);
+                    c.transform(wvp);
+                    const normal = Vector3.Cross(Vector3.Subtract(b, a), Vector3.Subtract(b, c));
+                    const d = Vector3.Dot(camera.forward, normal);
+                    if (d <= 0) {
+                        img.drawLine(a.x, a.y, b.x, b.y, this.color);
+                        img.drawLine(b.x, b.y, c.x, c.y, this.color);
+
+                    }
+
+                });
+            }
+
         }
     }
 }

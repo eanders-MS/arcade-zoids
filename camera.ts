@@ -17,11 +17,11 @@ namespace zoids {
 
         //% blockCombine block="pos" callInDebugger
         public get pos() { return this._pos; }
-        public set pos(v) { this._pos.copyFrom(v); }
+        public set pos(v) { this._pos.setFrom(v); }
 
         //% blockCombine block="rot" callInDebugger
         public get rot() { return this._rot; }
-        public set rot(v) { this._rot.copyFrom(v); }
+        public set rot(v) { this._rot.setFrom(v); }
 
         //% blockCombine block="world" callInDebugger
         public get view() { return this._view; }

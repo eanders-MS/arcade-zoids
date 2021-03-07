@@ -17,14 +17,14 @@ namespace zoids {
             return new Vector3(s, s, s);
         }
 
-        public copyFrom(v: Vector3): this {
+        public setFrom(v: Vector3): this {
             this.x = v.x;
             this.y = v.y;
             this.z = v.z;
             return this;
         }
 
-        public copyFromPoint(pt: Point): this {
+        public setFromPoint(pt: Point): this {
             this.x = pt.x;
             this.y = pt.y;
             this.z = pt.z;
@@ -112,6 +112,18 @@ namespace zoids {
             return (left.x * right.x + left.y * right.y + left.z * right.z);
         }
 
+        public static Cross(left: Vector3, right: Vector3): Vector3 {
+            return Vector3.CrossToRef(left, right, new Vector3());
+        }
+
+        public static CrossToRef(left: Vector3, right: Vector3, res: Vector3): Vector3 {
+            const x = left.y * right.z - left.z * right.y;
+            const y = left.z * right.x - left.x * right.z;
+            const z = left.x * right.y - left.y * right.x;
+            res.set(x, y, z);
+            return res;
+        }
+
         public static Add(p0: Vector3, p1: Vector3): Vector3 {
             return Vector3.AddToRef(p0, p1, new Vector3());
         }
@@ -153,7 +165,7 @@ namespace zoids {
         constructor(public x = 0, public y = 0, public z = 0, public w = 1) {
         }
 
-        public copyFrom(v: Quaternion): this {
+        public setFrom(v: Quaternion): this {
             this.x = v.x;
             this.y = v.y;
             this.z = v.z;
@@ -215,7 +227,7 @@ namespace zoids {
             ];
         }
 
-        public copyFrom(mat: Matrix): Matrix {
+        public setFrom(mat: Matrix): Matrix {
             const m = mat.m;
             return Matrix.FromValuesToRef(
                 m[0], m[1], m[2], m[3],
@@ -453,7 +465,7 @@ namespace zoids {
 
             if (det === 0) {
                 // not invertible
-                res.copyFrom(mat);
+                res.setFrom(mat);
                 return res;
             }
 
@@ -494,26 +506,6 @@ namespace zoids {
                 res
             );
             return res;         
-        }
-
-        public static TransformationMatrix(viewport: Viewport, world: Matrix, view: Matrix, proj: Matrix, zmin: number, zmax: number): Matrix {
-            const cw = viewport.width;
-            const ch = viewport.height;
-            const cx = viewport.x;
-            const cy = viewport.y;
-
-            const viewportMat = Matrix.FromValues(
-                cw / 2.0, 0.0, 0.0, 0.0,
-                0.0, -ch / 2.0, 0.0, 0.0,
-                0.0, 0.0, zmax - zmin, 0.0,
-                cx + cw / 2.0, ch / 2.0 + cy, zmin, 1.0);
-
-            const mat = MathTmp.mat;
-            Matrix.MultiplyToRef(world, view, mat);
-            Matrix.MultiplyToRef(mat, proj, mat);
-            Matrix.MultiplyToRef(mat, viewportMat, mat);
-
-            return mat;
         }
     }
 

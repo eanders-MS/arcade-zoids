@@ -7,15 +7,15 @@ namespace zoids {
 
         //% blockCombine block="pos" callInDebugger
         public get pos() { return this._pos; }
-        public set pos(v) { this._pos.copyFrom(v); }
+        public set pos(v) { this._pos.setFrom(v); }
 
         //% blockCombine block="rot" callInDebugger
         public get rot() { return this._rot; }
-        public set rot(v) { this._rot.copyFrom(v); }
+        public set rot(v) { this._rot.setFrom(v); }
 
         //% blockCombine block="scale" callInDebugger
         public get scale() { return this._scale; }
-        public set scale(v) { this._scale.copyFrom(v); }
+        public set scale(v) { this._scale.setFrom(v); }
 
         constructor() {
             this._pos = Vector3.Zero();
