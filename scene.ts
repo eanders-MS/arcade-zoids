@@ -66,7 +66,7 @@ namespace zoids {
     }
 
     export class scenes {
-        private static stack: Scene[] = [];
+        public static stack: Scene[] = [];
 
         private static currScene(): Scene {
             if (this.stack.length) {
@@ -103,17 +103,17 @@ namespace zoids {
             this.popScene();
             this.pushScene(scene);
         }
+    }
 
-        public static startup(scene: Scene) {
-            // Clear out all the scenes
-            while (this.stack.length) {
-                this.popScene();
-            }
-            for (let i = 0; i < 10; ++i) {
-                game.popScene();
-            }
-            this.pushScene(scene);
+    export function startup(scene: Scene) {
+        // Clear out all the scenes
+        while (scenes.stack.length) {
+            scenes.popScene();
         }
+        for (let i = 0; i < 10; ++i) {
+            game.popScene();
+        }
+        scenes.pushScene(scene);
     }
 
     game.addScenePopHandler((oldScene: scene.Scene) => oldScene.destroy());
