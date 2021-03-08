@@ -1,1 +1,1 @@
-<xml xmlns="https://developers.google.com/blockly/xml"><block type="pxt-on-start" id="*Sj92sR=`RQdr*|w309U" x="0" y="0"/></xml>
+<xml xmlns="https://developers.google.com/blockly/xml"><block type="pxt-on-start" id="/;I$FFtxJqT$,.sV1@G{" x="0" y="0"><statement name="HANDLER"><block type="typescript_statement" id="0!N;cREcpGR!B0%(qsmQ" editable="false"><mutation xmlns="http://www.w3.org/1999/xhtml" line0="setTimeout(() =&gt; zoids.scenes.startup(new zoids.Game()), 1);" numlines="1"></mutation></block></statement></block></xml>

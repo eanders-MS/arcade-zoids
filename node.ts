@@ -158,8 +158,14 @@ namespace zoids {
 
     export class PolygonNode extends Node {
 
-        constructor(private poly: Polygon, private color: number, scene: Scene) {
+        constructor(private poly: Polygon, private color: number, scene: Scene, private opts?: {
+            cullBackface?: boolean,
+            normal?: Vector3
+        }) {
             super(scene);
+            this.opts = opts || {};
+            if (this.opts.cullBackface === undefined) this.opts.cullBackface = false;
+            if (this.opts.normal === undefined && this.opts.cullBackface) this.opts.normal = new Vector3(0, 0, -1);
         }
 
         private foreachLine(cb: (p0: Vector3, p1: Vector3) => void) {
@@ -182,19 +188,32 @@ namespace zoids {
             const img = scene.backgroundImage();
             if (camera.type === CameraType.Perspective) {
                 let wvp = Matrix.Multiply(this.world, camera.viewProj);
-                this.foreachLine((p0, p1) => {
-                    p0.transform(wvp);
-                    p1.transform(wvp);
-                    img.drawLine(p0.x, p0.y, p1.x, p1.y, this.color);
-                });
+                let draw = true;
+                if (this.opts.cullBackface) {
+                    const d = Vector3.Dot(camera.forward, this.opts.normal);
+                    draw = d > 0;
+                }
+                if (draw) {
+                    this.foreachLine((p0, p1) => {
+                        p0.transform(wvp);
+                        p1.transform(wvp);
+                        img.drawLine(p0.x, p0.y, p1.x, p1.y, this.color);
+                    });
+                }
             }
         }
     }
 
     export class ShapeNode extends Node {
 
-        constructor(private shape: Shape, private color: number, scene: Scene) {
+        constructor(private shape: Shape, private color: number, scene: Scene, private opts?: {
+            cullBackface?: boolean,
+            drawCA?: boolean
+        }) {
             super(scene);
+            this.opts = opts || {};
+            if (this.opts.drawCA === undefined) this.opts.drawCA = false;
+            if (this.opts.cullBackface === undefined) this.opts.cullBackface = true;
         }
 
         draw(camera: Camera) {
@@ -221,6 +240,9 @@ namespace zoids {
                     if (d > 0) {
                         img.drawLine(a.x, a.y, b.x, b.y, this.color);
                         img.drawLine(b.x, b.y, c.x, c.y, this.color);
+                        if (this.opts.drawCA) {
+                            img.drawLine(c.x, c.y, a.x, a.y, this.color);
+                        }
                     }
                 });
             }

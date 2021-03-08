@@ -16,7 +16,8 @@
         "camera.ts",
         "scene.ts",
         "font.ts",
-        "shapes.ts"
+        "shapes.ts",
+        "ship.ts"
     ],
     "testFiles": [
         "test.ts"
