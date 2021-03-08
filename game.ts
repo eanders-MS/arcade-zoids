@@ -4,7 +4,7 @@ namespace zoids {
         private orthoCam: Camera;
         private perspCam: Camera;
         private globe: ShapeNode;
-        private ship: Ship;
+        private ship: ShipNode;
 
         constructor() {
             super();
@@ -14,10 +14,13 @@ namespace zoids {
             super.startup();
             this.orthoCam = new Camera(CameraType.Orthographic, Matrix.OrthoLH(scene.screenWidth(), scene.screenHeight(), 1, 100));
             this.perspCam = new Camera(CameraType.Perspective, Matrix.PerspectiveFovLH(1.2, scene.screenWidth() / scene.screenHeight(), 1, 100));
-            this.globe = new ShapeNode(shapes.Sphere, 11, this, { drawCA: true });
+            this.globe = new ShapeNode(shapes.IcoSphere, 11, this, { drawCA: true });
             this.globe.transform.scale = Vector3.FromScalar(3);
             this.globe.transform.pos.z = 2.5;
-            this.ship = new Ship(this);
+            this.ship = new ShipNode(this);
+            this.ship.transform.scale = Vector3.FromScalar(0.1);
+            this.ship.transform.rot.z = Math.PI / 2;
+            this.ship.transform.pos.z = 1;
         }
 
         activate() {
@@ -25,8 +28,8 @@ namespace zoids {
 
         update() {
             this.ship.update();
-            this.globe.transform.rot.y += this.ship.vel.x;
-            this.globe.transform.rot.x += this.ship.vel.y;
+            //this.globe.transform.rot.y += this.ship.vel.x;
+            //this.globe.transform.rot.x += this.ship.vel.y;
         }
 
         draw() {
