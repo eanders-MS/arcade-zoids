@@ -15,8 +15,11 @@ namespace zoids {
         }
 
         update() {
+            let thrusting = false;
             if (controller.right.isPressed()) this.transform.rot.z += TURN_SPEED;
             if (controller.left.isPressed()) this.transform.rot.z -= TURN_SPEED;
+            if (controller.up.isPressed()) thrusting = true;
+            this.thrust.visible = thrusting;
             this.ship.update();
             this.thrust.update();
         }

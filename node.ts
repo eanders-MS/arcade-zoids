@@ -7,6 +7,7 @@ namespace zoids {
         private _children: Node[];
         private _parent: Node;
         private _world: Matrix;
+        private _visible: boolean;
 
         //% blockCombine block="id" callInDebugger
         public get id() { return this._id; }
@@ -16,6 +17,12 @@ namespace zoids {
 
         public get children() { return this._children; }
 
+        //% blockCombine block="visible" callInDebugger
+        public get visible(): boolean {
+            return this._visible && (!this.parent || this.parent.visible);
+        }
+        public set visible(v: boolean) { this._visible = v; }
+        
         //% blockCombine block="parent" callInDebugger
         public get parent() { return this._parent; }
         public set parent(v: Node) {
@@ -42,6 +49,7 @@ namespace zoids {
             this._children = [];
             this._transform = new Transform();
             this._world = new Matrix();
+            this._visible = true;
         }
 
         public update() {}
@@ -142,6 +150,7 @@ namespace zoids {
         }
 
         draw(camera: Camera) {
+            if (!this.visible) return;
             const img = scene.backgroundImage();
             if (camera.type === CameraType.Orthographic) {
                 this.foreachLine((p0, p1) => img.drawLine(p0.x, p0.y, p1.x, p1.y, this.color));
@@ -185,6 +194,7 @@ namespace zoids {
         }
 
         draw(camera: Camera) {
+            if (!this.visible) return;
             const img = scene.backgroundImage();
             if (camera.type === CameraType.Perspective) {
                 let wvp = Matrix.Multiply(this.world, camera.viewProj);
@@ -217,6 +227,7 @@ namespace zoids {
         }
 
         draw(camera: Camera) {
+            if (!this.visible) return;
             const img = scene.backgroundImage();
             if (camera.type === CameraType.Perspective) {
                 const wvp = Matrix.Multiply(this.world, camera.viewProj);
